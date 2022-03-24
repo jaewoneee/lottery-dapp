@@ -1,36 +1,42 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import Web3 from "web3";
+import { CONTACT_ADDRESS, CONTACT_ABI } from "./config";
 
 function App() {
   const [account, setAccount] = useState();
-  const load = useCallback(async () => {
-    const web3 = new Web3(Web3.givenProvider || "http://localhost:7545");
-    const accounts = await web3.eth.requestAccounts();
+  const [balance, setBalance] = useState();
 
-    setAccount(accounts[0]);
-    console.log(account);
-  }, [account]);
+  const load = useCallback(
+    async (web3) => {
+      const accounts = await web3.eth.requestAccounts();
+
+      setAccount(accounts[0]);
+    },
+    [account]
+  );
+
+  const getBalance = useCallback(
+    async (web3) => {
+      const currentBalance = await web3.eth.getBalance(account);
+      setBalance(currentBalance);
+    },
+    [balance]
+  );
 
   useEffect(() => {
-    load();
-  }, [load, account]);
+    const web3 = new Web3(Web3.givenProvider || "http://localhost:8545");
+    load(web3);
+    getBalance(web3);
+    const contactList = new web3.eth.Contract(CONTACT_ABI, CONTACT_ADDRESS);
+    console.log(contactList);
+  }, [load, getBalance]);
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      my account : {account}
+      <br />
+      balance : {balance}
     </div>
   );
 }
