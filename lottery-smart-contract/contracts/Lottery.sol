@@ -43,6 +43,18 @@ contract Lottery{
     }
     
     /**
+    * @dev 베팅과 정답체크를 한다. 유저는 0.005ETH를 보내야 하고, 베팅용 1 byte 글자를 보낸다
+    * 큐에 저장된 베팅정보는 이후 distributre 함수에서 해결된다. 
+    * @param challenges 유저가 베팅하는 글자
+    * @return 함수가 잘 수행되었는지 확인하는 bool 값
+    */
+    function betAndDistribute(bytes1 challenges) public payable returns (bool result){
+        bet(challenges);
+        distribute();
+        return true;
+    }
+    
+    /**
     * @dev 베팅을 한다. 유저는 0.005ETH를 보내야 하고, 베팅용 1 byte 글자를 보낸다
     * 큐에 저장된 베팅정보는 이후 distributre 함수에서 해결된다. 
     * @param challenges 유저가 베팅하는 글자
